@@ -49,6 +49,7 @@ captures/
 *~
 *.swp
 
+#test
 # Android Patch
 gen-external-apklibs
 
