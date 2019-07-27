@@ -1,5 +1,6 @@
 package com.example.project2.activities;
 //Main activity
+//test2
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
