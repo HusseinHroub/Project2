@@ -1,6 +1,7 @@
 package com.example.project2.activities;
 //Main activity
 //test2
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -13,9 +14,14 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.project2.R;
+import com.example.project2.background.MtTestSenderThread;
+import com.example.project2.background.MyRecTestThread;
 import com.example.project2.background.MyService1;
 import com.example.project2.common.NotificationManagerr;
 import com.yuan.waveview.WaveView;
+
+import java.net.SocketException;
+import java.net.UnknownHostException;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -28,6 +34,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean isNotified5 = true;
     private boolean isNotNotified96 = true;
 
+
+    private MyRecTestThread testThread;
+    private MtTestSenderThread testSenderThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,10 +72,19 @@ public class MainActivity extends AppCompatActivity {
 //        startService(intent);
 
 
-        System.out.println("starting service");
-        Intent serviceIntent = new Intent(MainActivity.this, MyService1.class);
-        ContextCompat.startForegroundService(MainActivity.this, serviceIntent);
+//        System.out.println("starting service");
+//        Intent serviceIntent = new Intent(MainActivity.this, MyService1.class);
+//        ContextCompat.startForegroundService(MainActivity.this, serviceIntent);
 //        startService(serviceIntent);
+
+        //MY TEST TTHREADS
+
+
+        testThread = new MyRecTestThread();
+        testSenderThread = new MtTestSenderThread();
+
+
+        //MY TEST THREADS
 
 
     }
@@ -157,5 +175,12 @@ public class MainActivity extends AppCompatActivity {
     public void stopService(View v) {
         Intent serviceIntent = new Intent(this, MyService1.class);
         stopService(serviceIntent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        testSenderThread.stopThread();
+        testThread.stopThread();
+        super.onDestroy();
     }
 }
