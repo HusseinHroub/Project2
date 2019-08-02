@@ -1,4 +1,4 @@
-package com.example.project2.background;
+package com.example.project2.background.wthreads;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -7,32 +7,28 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-public class MtTestSenderThread extends Thread {
-
-    private String message = "gRes";
-    private DatagramPacket datagramPacket;
-    private DatagramSocket datagramSocket;
+public class GeneralSender extends UdpThread {
     private InetAddress inetAddress;
-    private static final int PORT = 8888;
-    private boolean runnable = true;
+    private String message = "gRes";
+    protected int INTERVAL = 2000;//default
 
-    public MtTestSenderThread(){
 
-        start();
-    }
-
-    @Override
-    public void run() {
+    public GeneralSender()  {
         try {
             inetAddress = InetAddress.getByName("192.168.1.177");
-            datagramSocket = new DatagramSocket();
             byte[] messageArray = message.getBytes();
+            datagramSocket = new DatagramSocket();
             datagramPacket = new DatagramPacket(messageArray, messageArray.length, inetAddress, PORT);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (SocketException e) {
             e.printStackTrace();
         }
+
+    }
+    @Override
+    public void run() {
+
         while(runnable) {
             try {
                 datagramSocket.send(datagramPacket);
@@ -42,20 +38,20 @@ public class MtTestSenderThread extends Thread {
             }
 
             try {
-                Thread.sleep(2000);
+                Thread.sleep(INTERVAL);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
         }
 
+
     }
 
+    @Override
+    public void stopThread() {
 
-    public void stopThread()
-    {
-
-        runnable = false;
-        datagramSocket.close();
+        super.stopThread();
+        interrupt();
     }
 }

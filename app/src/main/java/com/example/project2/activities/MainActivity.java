@@ -2,7 +2,10 @@ package com.example.project2.activities;
 //Main activity
 //test2
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -12,16 +15,14 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.project2.R;
-import com.example.project2.background.MtTestSenderThread;
-import com.example.project2.background.MyRecTestThread;
-import com.example.project2.background.MyService1;
+import com.example.project2.background.MyService;
+import com.example.project2.background.wthreads.UiReceiverThread;
+import com.example.project2.background.wthreads.UiSenderThread;
 import com.example.project2.common.NotificationManagerr;
 import com.yuan.waveview.WaveView;
-
-import java.net.SocketException;
-import java.net.UnknownHostException;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,10 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean isNotNotified2 = true;
     private boolean isNotified5 = true;
     private boolean isNotNotified96 = true;
+    private boolean noBroadCast = false;
 
-
-    private MyRecTestThread testThread;
-    private MtTestSenderThread testSenderThread;
+    private UiReceiverThread receiverThread;
+    private UiSenderThread uiSenderThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +51,12 @@ public class MainActivity extends AppCompatActivity {
 //        waveLoadingView.setAnimation();
 //        waveLoadingView.setProgressValue(1);
         //waveLoadingView.setAnimDuration(3000);
-        textView = findViewById(R.id.textView);
+        textView = findViewById(R.id.levelTextWave);
+
+
         waveView = findViewById(R.id.waveview);
         waveView.setbgColor(Color.WHITE);
         waveView.setWaveColor(ContextCompat.getColor(this, R.color.blueC));
-
         //Shape
         waveView.setMode(WaveView.MODE_CIRCLE);
 
@@ -73,15 +75,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 //        System.out.println("starting service");
-//        Intent serviceIntent = new Intent(MainActivity.this, MyService1.class);
+//        Intent serviceIntent = new Intent(MainActivity.this, MyService.class);
 //        ContextCompat.startForegroundService(MainActivity.this, serviceIntent);
 //        startService(serviceIntent);
 
         //MY TEST TTHREADS
-
-
-        testThread = new MyRecTestThread();
-        testSenderThread = new MtTestSenderThread();
 
 
         //MY TEST THREADS
@@ -97,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
 //            waveLoadingView.setProgressValue(progress);
 
             waveView.setProgress(progress);
+//            waveView.setSpeed(WaveView.SPEED_SLOW);
+            waveView.setSpeed(WaveView.SPEED_NORMAL);
+//            waveView.setVisibility(View.VISIBLE);
 
             textView.setText(progress + "%");
 
@@ -173,14 +174,56 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void stopService(View v) {
-        Intent serviceIntent = new Intent(this, MyService1.class);
+        Intent serviceIntent = new Intent(this, MyService.class);
         stopService(serviceIntent);
     }
 
     @Override
+    protected void onPause() {
+        LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(serviceReciver);
+        if (uiSenderThread != null)
+            uiSenderThread.stopThread();
+        if (receiverThread != null)
+            receiverThread.stopThread();
+        Intent intent = new Intent(this, MyService.class);
+        startService(intent);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        Intent serviceIntent = new Intent(this, MyService.class);
+        System.out.println("Called stopService");
+        LocalBroadcastManager.getInstance(MainActivity.this).registerReceiver(serviceReciver, new IntentFilter("STATUS"));
+
+        if (!stopService(serviceIntent))
+            initUiThreads();
+
+
+        super.onResume();
+    }
+
+    private void initUiThreads() {
+        System.out.println("back to onResume to make UI threads");
+        receiverThread = new UiReceiverThread(textView, waveView);
+        uiSenderThread = new UiSenderThread();
+    }
+
+    private BroadcastReceiver serviceReciver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean stopped = intent.getBooleanExtra("stopped", false);  //get the type of message from MyGcmListenerService 1 - lock or 0 -Unlock
+
+            if (stopped)
+                initUiThreads();
+            System.out.println("stopped:" + stopped);
+            noBroadCast = true;
+        }
+    };
+
+    @Override
     protected void onDestroy() {
-        testSenderThread.stopThread();
-        testThread.stopThread();
+
         super.onDestroy();
     }
 }
