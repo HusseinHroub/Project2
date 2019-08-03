@@ -11,14 +11,12 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.project2.R;
 import com.example.project2.background.wthreads.ServiceReceiverThread;
-import com.example.project2.background.wthreads.ServiceSenderThread;
 import com.example.project2.common.NotificationManagerr;
 
 public class MyService extends Service {
     private static final String CHANNEL_ID = "servicechannel";
     private final int FOR_GROUND_ID = 1;
     private ServiceReceiverThread serviceReceiverThread;
-    private ServiceSenderThread serviceSenderThread;
 
 
     // Handler that receives messages from the thread
@@ -31,16 +29,9 @@ public class MyService extends Service {
         System.out.println("onCreate()");
 
 
-
-
         if (serviceReceiverThread == null) {
             serviceReceiverThread = new ServiceReceiverThread(getApplicationContext());
             System.out.println("starting thread");
-        }
-
-        if (serviceSenderThread == null) {
-            serviceSenderThread = new ServiceSenderThread();
-
         }
 
 
@@ -93,7 +84,6 @@ public class MyService extends Service {
         Toast.makeText(this, "service stopped", Toast.LENGTH_SHORT).show();
         System.out.println("called onServiceDestroy()");
         serviceReceiverThread.stopThread();
-        serviceSenderThread.stopThread();
 
 
 //        stopSelf();
@@ -104,7 +94,7 @@ public class MyService extends Service {
     private void sendBroadcastForActivity() {
 
         Intent in = new Intent();
-        in.putExtra("stopped",true);
+        in.putExtra("stopped", true);
         in.setAction("STATUS");
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(in);
     }

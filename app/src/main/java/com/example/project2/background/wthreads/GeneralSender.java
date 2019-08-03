@@ -13,15 +13,13 @@ public class GeneralSender extends UdpThread {
     protected int INTERVAL = 2000;//default
 
 
-    public GeneralSender()  {
+    public GeneralSender(String address)  {
         try {
-            inetAddress = InetAddress.getByName("192.168.1.177");
+            setArduinoAddress(address);
             byte[] messageArray = message.getBytes();
             datagramSocket = new DatagramSocket();
             datagramPacket = new DatagramPacket(messageArray, messageArray.length, inetAddress, PORT);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (SocketException e) {
+        }  catch (SocketException e) {
             e.printStackTrace();
         }
 
@@ -46,6 +44,16 @@ public class GeneralSender extends UdpThread {
         }
 
 
+    }
+
+    public void setArduinoAddress(String address)
+    {
+        try {
+            System.out.println("trying to use the address: " + address);
+            inetAddress = InetAddress.getByName(address);
+        } catch (UnknownHostException e) {
+            System.out.println("failed");
+        }
     }
 
     @Override

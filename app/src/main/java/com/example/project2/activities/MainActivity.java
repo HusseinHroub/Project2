@@ -20,7 +20,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.example.project2.R;
 import com.example.project2.background.MyService;
 import com.example.project2.background.wthreads.UiReceiverThread;
-import com.example.project2.background.wthreads.UiSenderThread;
 import com.example.project2.common.NotificationManagerr;
 import com.yuan.waveview.WaveView;
 
@@ -37,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean noBroadCast = false;
 
     private UiReceiverThread receiverThread;
-    private UiSenderThread uiSenderThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,8 +179,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         LocalBroadcastManager.getInstance(MainActivity.this).unregisterReceiver(serviceReciver);
-        if (uiSenderThread != null)
-            uiSenderThread.stopThread();
+
         if (receiverThread != null)
             receiverThread.stopThread();
         Intent intent = new Intent(this, MyService.class);
@@ -206,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
     private void initUiThreads() {
         System.out.println("back to onResume to make UI threads");
         receiverThread = new UiReceiverThread(textView, waveView);
-        uiSenderThread = new UiSenderThread();
     }
 
     private BroadcastReceiver serviceReciver = new BroadcastReceiver() {

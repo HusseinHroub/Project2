@@ -26,6 +26,7 @@ public class ServiceReceiverThread extends GeneralReceiver {
                 CHANNEL_ID,
                 context);
         start();
+        sendWhoIsArduino();
 
     }
 

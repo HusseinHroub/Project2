@@ -18,6 +18,7 @@ public class UiReceiverThread extends GeneralReceiver {
         this.textView = textView;
         this.waveView = waveView;
         start();
+        sendWhoIsArduino();
     }
 
     @Override

@@ -11,8 +11,7 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="147dp"
-        android:layout_weight="25"
-        android:text="TextView" />
+        android:layout_weight="25" />
 
     <com.yuan.waveview.WaveView
         android:id="@+id/waveview"
