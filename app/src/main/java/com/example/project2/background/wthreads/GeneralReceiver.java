@@ -11,6 +11,7 @@ import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.util.Enumeration;
 
 abstract public class GeneralReceiver extends UdpThread {
@@ -62,10 +63,15 @@ abstract public class GeneralReceiver extends UdpThread {
                     continue;
                 }
 
-                value = Long.parseLong(valueString);
-                value = bounds(value, 100, 0);
-                value = 100 - value; //this is important!
-                onResultRec();
+                try {
+                    value = Long.parseLong(valueString);
+                    value = bounds(value, 100, 0);
+                    value = 100 - value; //this is important!
+                    onResultRec();
+
+                } catch (NumberFormatException e) {
+
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -98,7 +104,7 @@ abstract public class GeneralReceiver extends UdpThread {
             @Override
             public void run() {
                 System.out.println("send wia");
-                String message = "test";
+                String message = "wiad";
                 byte[] messageArray = message.getBytes();
                 try {
                     DatagramSocket datagramSocket = new DatagramSocket();

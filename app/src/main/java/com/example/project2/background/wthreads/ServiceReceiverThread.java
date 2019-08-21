@@ -12,9 +12,9 @@ public class ServiceReceiverThread extends GeneralReceiver {
     private Context context;
     private static final String CHANNEL_ID = "threadchannel";
 
-    private boolean isNotified10 = true;
+    private boolean isNotNotified10 = true;
     private boolean isNotNotified2 = true;
-    private boolean isNotified5 = true;
+    private boolean isNotNotified5 = true;
     private boolean isNotNotified96 = true;
 
 
@@ -38,25 +38,33 @@ public class ServiceReceiverThread extends GeneralReceiver {
 
     @Override
     public void onResultRec() {
+        System.out.println("value");
 
         if (value > 96) {
             if (isNotNotified96) {
                 isNotNotified96 = false;
+
                 showNotificaiton("Tank about to be filled", "You have more than 96% of water");
             }
+
+            isNotNotified10 = true;
+            isNotNotified5 = true;
+            isNotNotified2 = true;
+
         } else if (value < 10 && value >= 5) {
             //test
-            if (isNotified10) {
-                isNotified10 = false;
-                showNotificaiton("Water Warning", "You have less than 10% of water");
+            if (isNotNotified10) {
+                isNotNotified10 = false;
+                    showNotificaiton("Water Warning", "You have less than 10% of water");
             }
 
 
-            isNotified5 = true;
+            isNotNotified5 = true;
+            isNotNotified2 = true;
             //test
         } else if (value < 5 && value >= 2) {
-            if (isNotified5) {
-                isNotified5 = false;
+            if (isNotNotified5) {
+                isNotNotified5 = false;
                 showNotificaiton("Water Warning", "You have less than 5% of water");
             }
 
@@ -69,7 +77,7 @@ public class ServiceReceiverThread extends GeneralReceiver {
                 showNotificaiton("Water Warning", "You have less than 2% of water");
             }
         } else {
-            setAllNotified(true);
+            setAllNotNotified(true);
         }
 
         if (value < 90)
@@ -88,10 +96,10 @@ public class ServiceReceiverThread extends GeneralReceiver {
     }
 
 
-    private void setAllNotified(boolean b) {
+    private void setAllNotNotified(boolean b) {
 
-        isNotified5 = b;
-        isNotified10 = b;
+        isNotNotified5 = b;
+        isNotNotified10 = b;
         isNotNotified2 = b;
     }
 

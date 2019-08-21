@@ -44,8 +44,8 @@ public class MyService extends Service {
                 getApplicationContext());
         NotificationCompat.Builder notificationBuilder = NotificationManagerr.getNotificationBuilder(getApplicationContext(),
                 CHANNEL_ID,
-                "Listenintg",
-                "ok I am listening",
+                "Water Manager" ,
+                "You will be notified if an important event happen",
                 true);
 
 
@@ -56,7 +56,7 @@ public class MyService extends Service {
                 endService,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
-        notificationBuilder.addAction(R.drawable.wave_icon, "Cancle test", pendingIntent);
+        notificationBuilder.addAction(R.drawable.wave_icon, "Cancel", pendingIntent);
         startForeground(FOR_GROUND_ID, notificationBuilder.build());
 
 
