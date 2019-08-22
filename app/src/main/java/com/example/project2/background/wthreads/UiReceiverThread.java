@@ -37,7 +37,7 @@ public class UiReceiverThread extends GeneralReceiver {
         public void run() {
             textView.setText("" + value + '%');
             System.out.println("value is: " + value);
-            waveView.setSpeed(WaveView.SPEED_NORMAL);
+//            waveView.setSpeed(WaveView.SPEED_NORMAL);
             waveView.setProgress(value + 1);
         }
     };
